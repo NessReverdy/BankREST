@@ -29,6 +29,12 @@ public class UserEntity {
   @Column(nullable = false)
   private String lastName;
 
+  @Column(nullable = false, unique = true)
+  private String username;
+
+  @Column(nullable = false)
+  private String password;
+
   @OneToMany(mappedBy = "owner",
     cascade = CascadeType.ALL,
     orphanRemoval = true)
