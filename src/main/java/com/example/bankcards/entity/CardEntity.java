@@ -2,13 +2,14 @@ package com.example.bankcards.entity;
 
 import com.example.bankcards.exception.impl.CardDataException;
 import com.example.bankcards.status.CardStatus;
+import com.example.bankcards.util.CardCreator;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Entity
 @Getter
@@ -21,6 +22,7 @@ public class CardEntity {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_id", nullable = false)
+  @Setter
   private UserEntity owner;
 
   @Column(
@@ -31,7 +33,7 @@ public class CardEntity {
   private String number;
 
   @Column(nullable = false)
-  private LocalDate expiryDate;
+  private YearMonth expiryDate;
 
   @Setter
   @Enumerated(EnumType.STRING)
@@ -58,5 +60,13 @@ public class CardEntity {
     }
 
     balance = balance.subtract(amount);
+  }
+
+  public void setNumber(CardCreator creator) {
+    this.number = creator.generateCardNumber();
+  }
+
+  public void setExpiryDate(int year, CardCreator creator) {
+    this.expiryDate = creator.setExpireDate(year);
   }
 }

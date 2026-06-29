@@ -3,5 +3,10 @@ package com.example.bankcards.status;
 public enum CardStatus {
   ACTIVE,
   BLOCKED,
-  EXPIRED
+  BLOCK_REQUESTED,
+  EXPIRED,
+  PENDING,
+  APPROVED,
+  REJECTED,
+  CANCELLED
 }
