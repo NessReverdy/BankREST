@@ -6,7 +6,7 @@ import com.example.bankcards.dto.card.CardResponse;
 import com.example.bankcards.dto.card.CardSearchFilter;
 import com.example.bankcards.entity.CardEntity;
 import com.example.bankcards.exception.impl.CardNotFoundException;
-import com.example.bankcards.mapper.card.CardMapper;
+import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.status.CardStatus;

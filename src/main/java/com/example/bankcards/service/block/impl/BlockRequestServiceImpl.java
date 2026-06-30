@@ -7,7 +7,7 @@ import com.example.bankcards.entity.BlockEntity;
 import com.example.bankcards.entity.CardEntity;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.exception.impl.*;
-import com.example.bankcards.mapper.card.BlockMapper;
+import com.example.bankcards.mapper.BlockMapper;
 import com.example.bankcards.repository.BlockRequestRepository;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +53,7 @@ public class BlockRequestServiceImpl implements BlockRequestService {
 
   @Override
   @Transactional
+  @PreAuthorize("hasRole('ADMIN')")
   public BlockResponse processBlockRequest(Long requestId, BlockProcess request) {
     BlockEntity block = findBlockById(requestId);
 
@@ -82,6 +84,7 @@ public class BlockRequestServiceImpl implements BlockRequestService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public Page<BlockResponse> getAllRequests(Pageable pageable) {
     log.info("Getting all block requests");
     return blockRepo.findAll(pageable)
@@ -89,12 +92,14 @@ public class BlockRequestServiceImpl implements BlockRequestService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public Page<BlockResponse> getUserRequests(Long userId, Pageable pageable) {
     UserEntity user = findUserById(userId);
     return blockRepo.findByUser(user, pageable);
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public BlockResponse getRequestById(Long requestId) {
     return mapper.toResponse(blockRepo.findById(requestId)
       .orElseThrow(

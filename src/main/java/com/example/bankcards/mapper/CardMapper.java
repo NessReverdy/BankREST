@@ -1,4 +1,4 @@
-package com.example.bankcards.mapper.card;
+package com.example.bankcards.mapper;
 
 import com.example.bankcards.dto.card.CardBalanceResponse;
 import com.example.bankcards.dto.card.CardRequest;
