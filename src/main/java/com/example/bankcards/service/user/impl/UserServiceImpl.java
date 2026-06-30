@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -28,11 +29,8 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
+  @Transactional
   public UserResponse createUser(UserRequest userRequest) {
-    if (userRepo.existsByUsername(userRequest.username())){
-      throw new UserAlreadyExistsException("User with username: " + userRequest.username() + " already exists");
-    }
-
     String encodedPassword = passwordEncoder.encode(userRequest.password());
     UserEntity user = new UserEntity();
 
@@ -50,6 +48,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public UserResponse updateUser(Long id,UserRequest userRequest) {
     UserEntity user = findUserById(id);
 
@@ -69,6 +68,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @PreAuthorize("hasRole('ADMIN')")
+  @Transactional
   public boolean deleteUserById(Long id) {
     try{
       userRepo.deleteById(id);
@@ -93,6 +93,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
+  @Transactional
   public UserResponse changeRoleById(Long id, UserRole role) {
     UserEntity user = findUserById(id);
 
