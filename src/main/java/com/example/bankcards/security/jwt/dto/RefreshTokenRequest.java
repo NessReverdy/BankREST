@@ -1,6 +1,6 @@
 package com.example.bankcards.security.jwt.dto;
 
-public record RefreshRequest(
+public record RefreshTokenRequest(
   String refreshToken
 ) {
 }

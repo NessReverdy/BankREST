@@ -1,11 +1,13 @@
 package com.example.bankcards.service.transfer.impl;
 
+import com.example.bankcards.dto.card.CardBalanceResponse;
+import com.example.bankcards.dto.transfer.TransferRequest;
 import com.example.bankcards.entity.CardEntity;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.exception.impl.CardDataException;
 import com.example.bankcards.exception.impl.CardNotFoundException;
+import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.transfer.TransferService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +27,17 @@ public class TransferServiceImpl implements TransferService {
   private static final Logger log = LogManager.getLogger(TransferServiceImpl.class);
 
   private final CardRepository cardRepo;
+  private final CardMapper cardMapper;
 
   @Override
   @Transactional
-  public boolean transfer(Long idFrom, Long idTo, BigDecimal amount) {
+  public List<CardBalanceResponse> transfer(TransferRequest request) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserEntity currentUser = (UserEntity) authentication.getPrincipal();
+
+    Long idFrom = request.idFrom();
+    Long idTo = request.idTo();
+    BigDecimal amount = request.amount();
 
     CardEntity cardFrom = findCardById(idFrom);
     CardEntity cardTo = findCardById(idTo);
@@ -57,7 +66,12 @@ public class TransferServiceImpl implements TransferService {
     log.info("Transfer {} from card {} to card {} by user {}",
       amount, idFrom, idTo, currentUser.getUsername());
 
-    return true;
+    List<CardBalanceResponse> cards = new ArrayList<>();
+
+    cards.add(cardMapper.toBalanceResponse(cardFrom));
+    cards.add(cardMapper.toBalanceResponse(cardTo));
+
+    return cards;
   }
 
   private CardEntity findCardById(Long id) {

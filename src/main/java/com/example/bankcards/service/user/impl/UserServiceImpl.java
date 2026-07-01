@@ -1,5 +1,6 @@
 package com.example.bankcards.service.user.impl;
 
+import com.example.bankcards.dto.user.RoleRequest;
 import com.example.bankcards.dto.user.UserRequest;
 import com.example.bankcards.dto.user.UserResponse;
 import com.example.bankcards.entity.UserEntity;
@@ -68,11 +69,10 @@ public class UserServiceImpl implements UserService {
   @Override
   @PreAuthorize("hasRole('ADMIN')")
   @Transactional
-  public boolean deleteUserById(Long id) {
+  public void deleteUserById(Long id) {
     try {
       userRepo.deleteById(id);
-      log.info("Deleted user with id: " + id);
-      return true;
+      log.info("Deleted user with id: {}", id);
     } catch (UserNotFoundException e) {
       throw new UserNotFoundException("User with id: " + id + " not found");
     }
@@ -94,10 +94,10 @@ public class UserServiceImpl implements UserService {
   @Override
   @PreAuthorize("hasRole('ADMIN')")
   @Transactional
-  public UserResponse changeRoleById(Long id, UserRole role) {
+  public UserResponse changeRoleById(Long id, RoleRequest roleRequest) {
     UserEntity user = findUserById(id);
 
-    user.setRole(role);
+    user.setRole(roleRequest.role());
     userRepo.save(user);
 
     log.info("Changed user with id: {}", id);

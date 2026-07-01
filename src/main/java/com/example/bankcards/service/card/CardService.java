@@ -10,12 +10,10 @@ import org.springframework.data.domain.Pageable;
 public interface CardService {
   CardResponse createCard(CardRequest card);
   CardResponse updateCard(Long id, CardRequest card);
-  boolean deleteCardById(Long id);
+  void deleteCardById(Long id);
   CardResponse getCardById(Long id);
   Page<CardResponse> getAllCards(Pageable pageable);
 
-  CardResponse blockCardById(Long id);
-  CardResponse activateCardById(Long id);
   CardBalanceResponse getCardBalanceById (Long id);
   Page<CardResponse> searchCards(CardSearchFilter filter, Pageable pageable);
 }

@@ -19,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +38,12 @@ public class BlockRequestServiceImpl implements BlockRequestService {
 
   @Override
   @Transactional
-  public BlockResponse createBlockRequest(Long userId, BlockRequest request) {
+  public BlockResponse createBlockRequest(BlockRequest request) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserEntity user = (UserEntity) authentication.getPrincipal();
+
     CardEntity card = findCardById(request.cardId());
-    validateBlockRequest(card, userId);
-    UserEntity user = findUserById(userId);
+    validateBlockRequest(card, user.getId());
 
     BlockEntity blockRequest = new BlockEntity(card, user, request.reason());
     blockRepo.save(blockRequest);
@@ -109,10 +113,13 @@ public class BlockRequestServiceImpl implements BlockRequestService {
   }
 
   @Override
-  public void cancelRequest(Long requestId, Long userId) {
+  public void cancelRequest(Long requestId) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserEntity user = (UserEntity) authentication.getPrincipal();
+
     BlockEntity block = findBlockById(requestId);
 
-    if (!block.getUser().getId().equals(userId)) {
+    if (!block.getUser().getId().equals(user.getId())) {
       throw new UserNotAuthorizedException("You can only cancel your own requests");
     }
     if (block.getStatus() != CardStatus.PENDING) {

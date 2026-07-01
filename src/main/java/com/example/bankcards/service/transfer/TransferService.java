@@ -1,7 +1,10 @@
 package com.example.bankcards.service.transfer;
 
-import java.math.BigDecimal;
+import com.example.bankcards.dto.card.CardBalanceResponse;
+import com.example.bankcards.dto.transfer.TransferRequest;
+
+import java.util.List;
 
 public interface TransferService {
-  boolean transfer(Long idFrom, Long idTo, BigDecimal amount);
+  List<CardBalanceResponse> transfer(TransferRequest request);
 }

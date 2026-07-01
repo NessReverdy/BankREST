@@ -63,11 +63,10 @@ public class CardServiceImpl implements CardService {
   @Override
   @Transactional
   @PreAuthorize("hasRole('ADMIN')")
-  public boolean deleteCardById(Long id) {
+  public void deleteCardById(Long id) {
     try {
       repo.deleteById(id);
       log.info("Delete card with id: {}", id);
-      return true;
     } catch (CardNotFoundException e) {
       throw new CardNotFoundException("Card with id: " + id + " not found for deleting.");
     }
@@ -82,28 +81,6 @@ public class CardServiceImpl implements CardService {
   public Page<CardResponse> getAllCards(Pageable pageable) {
     Page<CardEntity> cardPage = repo.findAll(pageable);
     return cardPage.map(mapper::toResponse);
-  }
-
-  @Override
-  public CardResponse blockCardById(Long id) {
-    CardEntity card = findCardById(id);
-
-    card.setStatus(CardStatus.BLOCKED);
-    repo.save(card);
-    log.info("Block card with id: {}", id);
-
-    return mapper.toResponse(card);
-  }
-
-  @Override
-  public CardResponse activateCardById(Long id) {
-    CardEntity card = findCardById(id);
-
-    card.setStatus(CardStatus.ACTIVE);
-    repo.save(card);
-    log.info("Activate card with id: {}", id);
-
-    return mapper.toResponse(card);
   }
 
   @Override

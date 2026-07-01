@@ -10,7 +10,7 @@ import com.example.bankcards.exception.impl.UserAlreadyExistsException;
 import com.example.bankcards.exception.impl.UserNotFoundException;
 import com.example.bankcards.mapper.UserMapper;
 import com.example.bankcards.repository.UserRepository;
-import com.example.bankcards.security.jwt.dto.RefreshRequest;
+import com.example.bankcards.security.jwt.dto.RefreshTokenRequest;
 import com.example.bankcards.security.jwt.service.jwt.JwtService;
 import com.example.bankcards.security.jwt.service.refresh.RefreshTokenService;
 import com.example.bankcards.service.auth.AuthService;
@@ -68,14 +68,15 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public void logout(String refreshToken) {
-    refreshTokenService.delete(refreshToken);
+  public void logout(RefreshTokenRequest refreshTokenRequest) {
+    String token = refreshTokenRequest.refreshToken();
+    refreshTokenService.delete(token);
     log.info("Logged out user");
   }
 
   @Override
-  public AuthResponse refresh(RefreshRequest refreshRequest) {
-    String oldToken = refreshRequest.refreshToken();
+  public AuthResponse refresh(RefreshTokenRequest refreshTokenRequest) {
+    String oldToken = refreshTokenRequest.refreshToken();
     String username = jwtService.extractUsername(oldToken);
 
     UserEntity user = userRepo.findByUsername(username)
