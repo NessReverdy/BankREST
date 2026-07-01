@@ -3,7 +3,6 @@ package com.example.bankcards.service.user.impl;
 import com.example.bankcards.dto.user.UserRequest;
 import com.example.bankcards.dto.user.UserResponse;
 import com.example.bankcards.entity.UserEntity;
-import com.example.bankcards.exception.impl.UserAlreadyExistsException;
 import com.example.bankcards.exception.impl.UserNotFoundException;
 import com.example.bankcards.mapper.UserMapper;
 import com.example.bankcards.repository.UserRepository;
@@ -49,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public UserResponse updateUser(Long id,UserRequest userRequest) {
+  public UserResponse updateUser(Long id, UserRequest userRequest) {
     UserEntity user = findUserById(id);
 
     String encodedPassword = passwordEncoder.encode(userRequest.password());
@@ -70,11 +69,11 @@ public class UserServiceImpl implements UserService {
   @PreAuthorize("hasRole('ADMIN')")
   @Transactional
   public boolean deleteUserById(Long id) {
-    try{
+    try {
       userRepo.deleteById(id);
       log.info("Deleted user with id: " + id);
       return true;
-    } catch (UserNotFoundException e){
+    } catch (UserNotFoundException e) {
       throw new UserNotFoundException("User with id: " + id + " not found");
     }
   }
